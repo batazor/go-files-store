@@ -21,3 +21,4 @@
   + [ ] GET /files/:id
   + [ ] POST /files
   + [ ] DELETE /files/:id
+  + [ ] Logger
