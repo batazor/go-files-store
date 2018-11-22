@@ -1,0 +1,61 @@
+{
+	"variables": [],
+	"info": {
+		"name": "go-files-store",
+		"_postman_id": "e5a2e52d-780a-e698-fa49-86f7b640f3f6",
+		"description": "Service for get/set files",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "files",
+			"description": "",
+			"item": [
+				{
+					"name": "Get file list",
+					"request": {
+						"url": "{{URL}}/files",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get file by ID",
+					"request": {
+						"url": "{{URL}}/files/{{ID_FILE}}",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": "Get file by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Set file",
+					"request": {
+						"url": "{{URL}}/files",
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete file by ID",
+					"request": {
+						"url": "{{URL}}/files/{{ID_FILE}}",
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

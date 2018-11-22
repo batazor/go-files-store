@@ -16,3 +16,8 @@
 + [ ] [Setup Nginx proxy with Minio Server](https://docs.minio.io/docs/setup-nginx-proxy-with-minio.html)
 + [ ] [Upload Files Using Pre-signed URLs](https://docs.minio.io/docs/upload-files-from-browser-using-pre-signed-urls.html)
 + [ ] [Prometheus](https://docs.minio.io/docs/how-to-monitor-minio-using-prometheus.html)
++ [ ] REST
+  + [ ] GET /files
+  + [ ] GET /files/:id
+  + [ ] POST /files
+  + [ ] DELETE /files/:id
