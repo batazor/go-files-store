@@ -15,6 +15,7 @@ docker-compose up
 | MINIO_ACCESS_KEY    | ACCESS_KEY                       |
 | MINIO_SECRET_KEY    | SECRET_KEY                       |
 | MINIO_SECURE        | false                            |
+| HTTP_PORT           | 7070                             |
 
 ### Feature
 

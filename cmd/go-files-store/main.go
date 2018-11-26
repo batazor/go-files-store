@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/batazor/go-files-store/pkg/minio"
+	"github.com/batazor/go-files-store/pkg/rest"
 	"go.uber.org/zap"
 )
 
@@ -20,9 +21,9 @@ func init() {
 
 func main() {
 	logger.Info("Run service")
-	fmt.Print("Hello world")
 
 	go minio.Connect()
+	go rest.Run()
 
 	// Wait forever
 	select {}

@@ -3,6 +3,8 @@ package rest
 import (
 	"errors"
 	"fmt"
+	"github.com/batazor/go-files-store/pkg/rest/files"
+	"github.com/batazor/go-files-store/pkg/rest/httpLogger"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
@@ -15,7 +17,7 @@ var (
 	logger *zap.Logger
 	err    error
 
-	PORT = utils.Getenv("PORT", "4070")
+	PORT = utils.Getenv("HTTP_PORT", "7070")
 )
 
 func init() {
@@ -43,6 +45,7 @@ func Run() {
 	r.Use(cors.Handler)
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
+	r.Use(httpLogger.NewZapMiddleware("router", logger))
 	r.NotFound(NotFoundHandler)
 
 	r.Mount("/files", files.Routes())
