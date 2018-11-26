@@ -1,20 +1,25 @@
 package files
 
 import (
+	"fmt"
 	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
+	"go.uber.org/zap"
 	"net/http"
+)
+
+var (
+	logger *zap.Logger
+	err    error
 )
 
 // Routes creates a REST router
 func Routes() chi.Router {
 	r := chi.NewRouter()
-	r.Use(middleware.AllowContentType("application/json"))
 
 	r.Get("/", list)
-	r.Patch("/{filesId}", getFile)
+	r.Get("/{fileId}", getFile)
 	r.Post("/", create)
-	r.Delete("/{filesId}", delete)
+	r.Delete("/{fileId}", destroy)
 
 	return r
 }
@@ -22,23 +27,54 @@ func Routes() chi.Router {
 func list(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	w.Write([]byte("{}"))
+	w.WriteHeader(http.StatusOK)
+	_, err := w.Write([]byte("{}"))
+	if err != nil {
+		logger.Error(err.Error())
+	}
 }
 
 func getFile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	w.Write([]byte("{}"))
+	w.WriteHeader(http.StatusOK)
+	_, err := w.Write([]byte("{}"))
+	if err != nil {
+		logger.Error(err.Error())
+	}
 }
 
 func create(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	w.Write([]byte("{}"))
+	file, _, err := r.FormFile("file")
+	if err != nil {
+		fmt.Println("file", err)
+		logger.Error(err.Error())
+		w.WriteHeader(http.StatusBadRequest)
+
+		_, err = w.Write([]byte(`{"error":"badRequest"}`))
+		if err != nil {
+			logger.Error(err.Error())
+		}
+	}
+	defer file.Close()
+
+	// TODO: load to fs
+
+	w.WriteHeader(http.StatusCreated)
+	_, err = w.Write([]byte("{}"))
+	if err != nil {
+		logger.Error(err.Error())
+	}
 }
 
-func delete(w http.ResponseWriter, r *http.Request) {
+func destroy(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	w.Write([]byte("{}"))
+	w.WriteHeader(http.StatusOK)
+	_, err := w.Write([]byte("{}"))
+	if err != nil {
+		logger.Error(err.Error())
+	}
 }

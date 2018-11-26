@@ -8,6 +8,14 @@ import (
 )
 
 var (
+	SendFile = make(chan []byte)
+)
+
+type Client struct {
+	client *minio.Client
+}
+
+var (
 	logger *zap.Logger
 	err    error
 
@@ -25,11 +33,28 @@ func init() {
 }
 
 func Connect() {
+	c := Client{}
+
 	// Initialize minio client object.
-	_, err := minio.New(MINIO_ENDPOINT, MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_SECURE == "true")
+	c.client, err = minio.New(MINIO_ENDPOINT, MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_SECURE == "true")
 	if err != nil {
 		logger.Error(err.Error())
 	}
 
 	logger.Info("Success connect to minio")
+
+	go func() {
+		for {
+			select {
+			case fiel := <-SendFile:
+				c.send(fiel)
+			}
+		}
+	}()
+}
+
+func (c *Client) send(fiel []byte) error {
+	logger.Info("Get file. Next step: laod to minio")
+	//_,err := c.Client.PutObject(bucketTime, objectName, reader, objectSize, opts)
+	return err
 }
