@@ -17,7 +17,7 @@
 + [ ] [Upload Files Using Pre-signed URLs](https://docs.minio.io/docs/upload-files-from-browser-using-pre-signed-urls.html)
 + [ ] [Prometheus](https://docs.minio.io/docs/how-to-monitor-minio-using-prometheus.html)
 + [ ] REST
-  + [ ] GET /files
+  + [x] GET /files
   + [ ] GET /files/:id
   + [x] POST /files
   + [ ] DELETE /files/:id
@@ -28,3 +28,4 @@
 ### Xm...
 
 + [ ] `POST /files` - check on uniq name?
++ [ ] `GET /files` - return `[]string`
