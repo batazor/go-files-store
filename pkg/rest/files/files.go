@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/go-chi/chi"
 	"go.uber.org/zap"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -47,7 +48,7 @@ func getFile(w http.ResponseWriter, r *http.Request) {
 func create(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	file, _, err := r.FormFile("file")
+	file, handler, err := r.FormFile("file")
 	if err != nil {
 		fmt.Println("file", err)
 		logger.Error(err.Error())
@@ -60,7 +61,13 @@ func create(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	// TODO: load to fs
+	fileBytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		w.Write([]byte(`{"error":"badRequest"}`))
+		logger.Error(err.Error())
+	}
+
+	ioutil.WriteFile("./tmp/"+handler.Filename, fileBytes, 0644)
 
 	w.WriteHeader(http.StatusCreated)
 	_, err = w.Write([]byte("{}"))
