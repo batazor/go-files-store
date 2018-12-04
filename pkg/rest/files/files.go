@@ -7,6 +7,7 @@ import (
 	"go.uber.org/zap"
 	"io/ioutil"
 	"net/http"
+	"time"
 )
 
 var (
@@ -18,7 +19,7 @@ var (
 func Routes() chi.Router {
 	r := chi.NewRouter()
 
-	r.Get("/", list)
+	r.Get("/", getFileList)
 	r.Get("/{fileId}", getFile)
 	r.Post("/", create)
 	r.Delete("/{fileId}", destroy)
@@ -26,14 +27,36 @@ func Routes() chi.Router {
 	return r
 }
 
-func list(w http.ResponseWriter, r *http.Request) {
+func getFileList(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	w.WriteHeader(http.StatusOK)
-	_, err := w.Write([]byte("{}"))
-	if err != nil {
-		logger.Error(err.Error())
+	doneCh := make(chan minio.File)
+
+	// Indicate to our routine to exit cleanly upon return.
+	defer close(doneCh)
+
+	minio.GetFileList <- minio.File{
+		Name:   "",
+		FileCH: doneCh,
 	}
+
+	select {
+	case file := <-doneCh:
+		println(file.Name)
+		w.WriteHeader(http.StatusOK)
+		_, err := w.Write([]byte(`{"fileList":"` + file.Name + `"}`))
+		if err != nil {
+			logger.Error(err.Error())
+		}
+	case <-time.After(2 * time.Second):
+		logger.Error("getFileList - timeout > 30 seconds")
+		w.WriteHeader(http.StatusOK)
+		_, err := w.Write([]byte("{}"))
+		if err != nil {
+			logger.Error(err.Error())
+		}
+	}
+
 }
 
 func getFile(w http.ResponseWriter, r *http.Request) {

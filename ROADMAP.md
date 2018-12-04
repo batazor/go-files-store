@@ -22,6 +22,8 @@
   + [x] POST /files
   + [ ] DELETE /files/:id
   + [x] Logger
+  + [ ] Bucket `/bucket`
+    + [ ] CRUD
   
 ### Xm...
 

@@ -9,7 +9,8 @@ import (
 )
 
 var (
-	SendFile = make(chan File)
+	SendFile    = make(chan File)
+	GetFileList = make(chan File)
 )
 
 type Client struct {
@@ -49,6 +50,8 @@ func Connect() {
 			select {
 			case file := <-SendFile:
 				c.send(file)
+			case file := <-GetFileList:
+				c.getFileList(file)
 			}
 		}
 	}()
@@ -62,4 +65,20 @@ func (c *Client) send(file File) {
 		return
 	}
 	logger.Info(fmt.Sprintf("Uploaded %s of size: %s - successfully", file.Name, reader.Size()))
+}
+
+func (c *Client) getFileList(file File) {
+	var b bytes.Buffer
+	doneCh := make(chan struct{})
+
+	// Indicate to our routine to exit cleanly upon return.
+	defer close(doneCh)
+
+	for object := range c.client.ListObjects("test", file.Name, true, doneCh) {
+		b.WriteString(object.Key + ",")
+	}
+
+	file.FileCH <- File{
+		Name: b.String(),
+	}
 }
