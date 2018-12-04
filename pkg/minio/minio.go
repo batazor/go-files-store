@@ -1,6 +1,7 @@
 package minio
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/batazor/go-files-store/pkg/utils"
 	"github.com/minio/minio-go"
@@ -8,7 +9,7 @@ import (
 )
 
 var (
-	SendFile = make(chan []byte)
+	SendFile = make(chan File)
 )
 
 type Client struct {
@@ -46,15 +47,19 @@ func Connect() {
 	go func() {
 		for {
 			select {
-			case fiel := <-SendFile:
-				c.send(fiel)
+			case file := <-SendFile:
+				c.send(file)
 			}
 		}
 	}()
 }
 
-func (c *Client) send(fiel []byte) error {
-	logger.Info("Get file. Next step: laod to minio")
-	//_,err := c.Client.PutObject(bucketTime, objectName, reader, objectSize, opts)
-	return err
+func (c *Client) send(file File) {
+	reader := bytes.NewReader(file.Payload)
+	_, err := c.client.PutObject("test", file.Name, reader, reader.Size(), minio.PutObjectOptions{ContentType: "application/octet-stream"})
+	if err != nil {
+		logger.Error(err.Error())
+		return
+	}
+	logger.Info(fmt.Sprintf("Uploaded %s of size: %s - successfully", file.Name, reader.Size()))
 }

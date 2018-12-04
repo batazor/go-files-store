@@ -2,6 +2,7 @@ package files
 
 import (
 	"fmt"
+	"github.com/batazor/go-files-store/pkg/minio"
 	"github.com/go-chi/chi"
 	"go.uber.org/zap"
 	"io/ioutil"
@@ -63,16 +64,19 @@ func create(w http.ResponseWriter, r *http.Request) {
 
 	fileBytes, err := ioutil.ReadAll(file)
 	if err != nil {
-		w.Write([]byte(`{"error":"badRequest"}`))
+		_, _ = w.Write([]byte(`{"error":"badRequest"}`))
 		logger.Error(err.Error())
 	}
-
-	ioutil.WriteFile("./tmp/"+handler.Filename, fileBytes, 0644)
 
 	w.WriteHeader(http.StatusCreated)
 	_, err = w.Write([]byte("{}"))
 	if err != nil {
 		logger.Error(err.Error())
+	}
+
+	minio.SendFile <- minio.File{
+		Name:    handler.Filename,
+		Payload: fileBytes,
 	}
 }
 

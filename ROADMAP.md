@@ -19,6 +19,10 @@
 + [ ] REST
   + [ ] GET /files
   + [ ] GET /files/:id
-  + [ ] POST /files
+  + [x] POST /files
   + [ ] DELETE /files/:id
   + [x] Logger
+  
+### Xm...
+
++ [ ] `POST /files` - check on uniq name?
